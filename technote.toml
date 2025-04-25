@@ -21,3 +21,21 @@ orcid = "https://orcid.org/0000-0002-3205-2484"
 name = "Department of Physics"
 internal_id = "Harvard-Physics"
 address = "Harvard University, 17 Oxford St., Cambridge MA 02138, USA"
+
+[[technote.authors]]
+name.given = "Parker"
+name.family = "Fagrelius"
+[[technote.authors.affiliations]]
+name = "NOIRLab"
+
+[[technote.authors]]
+name.given = "Fritz"
+name.family = "Mueller"
+[[technote.authors.affiliations]]
+name = "SLAC National Accelerator Laboratory"
+
+[[technote.authors]]
+name.given = "Nathan"
+name.family = "Amouroux"
+[[technote.authors.affiliations]]
+name = "French National Centre for Scientific Research"

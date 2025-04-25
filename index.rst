@@ -4,7 +4,7 @@ Collimated Beam Projector Installation and ComCam Testing
 
 .. abstract::
 
-   Report on the initial installation and testing of the laser and Collimated Beam Projector during the ComCam campaign.
+   Report on the initial installation and testing of the laser and Collimated Beam Projector during the ComCam campaign. We include an in-depth discussion of the measurement of the ComCam g and r band filter throughputs.
 
 Introduction
 ============
@@ -153,25 +153,181 @@ Here is a list of the major tests and milestones we were able to achieve:
 
    **Figure 6**: The one-pinhole-per-amp imaged on ComCam (left) and the two lines of pinholes of varying sizes imaged on ComCam (right).
 
+A more complete summary of the tests, along with the dates and sequence numbers of the tests can be found `here <https://rubinobs.atlassian.net/wiki/spaces/LTS/pages/315523249/Summary+of+ComCam+CBP+Tests+and+Analyses>`_. A detailed observing log from the four night campaign can be found `at this link <https://rubinobs.atlassian.net/wiki/spaces/LTS/pages/290062518/CBP+ComCam+Observing+Log>`_. For the rest of this report, we go into more detail on the filter throughput measurements.
+
+ComCam Filter Throughput Measurement
+====================================
+
+Data Taking Sequence
+--------------------
+
+The CBP throughput measurement campaign on ComCam was performed on the 10th and the 11th of december 2024 on filters 'g' and 'r'. The mask used for this study is the one per CCD with 150 um diameter CBP pinholes. For each wavelength, the main sequence (A-1) of data taking consists of taking an image with the filter 'g', then with filter 'r', and finally without filter (denoted by 'none' here). Then, a set of 'dark' images with the laser off are taken following the same order (A-2). Sequence A is the combination of A-1 and A-2. Due to lack of time on the second day which was dedicated to scanning the filter edges, we switched to a second sequence (B). This sequence consists in taking an image with one filter immediately followed by an image with laser off for each wavelength, and then doing the same thing without a filter. For exposure time studies, there are some duplicate wavelengths. For both those sequences, half second electrometer readings were taken after every exposure.
 
 .. container:: figure
 
    .. list-table::
-      :widths: 50 50
+      :widths: 100
       :header-rows: 0
 
       * - .. image:: images/one_per_CCD_image.png
-            :width: 300px
-        - .. image:: images/filter_throughput.png
-            :width: 300px
+            :width: 600px
 
-   **Figure 7**: The one-pinhole-per-CCD mask with a scaling so that the ghosts are clearly visible (left) and (right) the filter transmission curves for g and r band, calculated by doing photometry on images like the left. Photometry of spots with the filter in were divided by photometry of the spots with the filter removed.
+   **Figure 7**: The one-pinhole-per-CCD mask with a scaling so that the ghosts are clearly visible. This mask was used to perform the filter throughput measurements.
 
-A more complete summary of the tests, along with the dates and sequence numbers of the tests can be found `here <https://rubinobs.atlassian.net/wiki/spaces/LTS/pages/315523249/Summary+of+ComCam+CBP+Tests+and+Analyses>`_. A detailed observing log from the four night campaign can be found `at this link <https://rubinobs.atlassian.net/wiki/spaces/LTS/pages/290062518/CBP+ComCam+Observing+Log>`_.
+.. list-table::
+   :widths: 15 40 10 10
+   :header-rows: 1
+
+   * - **Day**
+     - **Domain (nm)**
+     - **Steps (nm)**
+     - **Sequence**
+   * - 20241210
+     - [340,380] U [440,460] U [540,560] U [640,660] U [740,750] U [1000,1120] U [1140,1160]
+     - 10
+     - A
+   * - 20241210
+     - [380,440] U [460,540] U [560,640] U [660,740] U [1120,1140] U [1160,1240]
+     - 20
+     - A
+   * - 20241211
+     - [537, 570]
+     - 1
+     - A
+   * - 20241211
+     - [676, 706]
+     - 2 (r)
+     - B
+   * - 20241211
+     - [385, 419]
+     - 2 (g)
+     - B
+
+Images
+------
+
+The measurements described in this note were initially performed on post-ISR CCDs as a first approach. However, it was later discovered that the application of flats affected the flux measurement of the CBP spots, leading to issues in the throughput calculation, including values exceeding one.
+
+The images used in this analysis were reprocessed using a custom ISR configuration, which included only overscan subtraction.
+
+Background Subtraction
+----------------------
+
+Background Images
+^^^^^^^^^^^^^^^^^
+
+Some CBP exposures were taken during sunset, introducing additional flux contamination that varied over time. As a result, using the laser-off images as background estimators in such conditions introduced a time-dependent bias in the measured spot flux. The figure below shows the average count on the laser-off images versus the time of the day.
+
+Since these images could not be used directly, an alternative method was implemented to ensure consistent background subtraction across all spots.
+
+.. container:: figure
+
+   .. list-table::
+      :widths: 100
+      :header-rows: 0
+
+      * - .. image:: images/background.jpeg
+            :width: 600px
+
+   **Figure 8**: The mean background of the CBP images taken with the laser off over the course of the observations.
+
+Renormalization with Photodiode Data
+------------------------------------
+
+The photodiode measurements consist of recording electrometer data for 0.5 seconds after each exposure, providing an estimate of the laser flux. During the ComCam campaign, the photodiode operated in current mode, resulting in relatively large uncertainties (~10%) on the current measurements.
+
+Normalizing spot fluxes using these data would therefore introduce an additional 10% uncertainty, which is undesirable given the precision required. As a result, we assume for this analysis that the laser flux is stable to within 10% at a given wavelength throughout the ComCam campaign.
+
+.. container:: figure
+
+   .. list-table::
+      :widths: 100
+      :header-rows: 0
+
+      * - .. image:: images/electrometer.jpeg
+            :width: 600px
+
+   **Figure 9**: The mean electrometer current for each measurement.
+
+Spots Flux Measurement - Aperture Photometry
+--------------------------------------------
+
+Spot fluxes are measured using aperture photometry with a circular aperture of 200 pixels in radius, selected to encompass the largest spot size observed across all exposures. The aperture is centered at the mean spot position for each filter and each day of data taking as described above (see background estimation).
+
+The radius choice was validated through a study of the dependence of the measured flux on aperture radius (see “Flux vs. Aperture Radius” figure). The photometry is performed using the photutils aperture photometry tools, applied to background-subtracted images using the background model described in the previous section.
+
+The figure below shows the measured spot flux as a function of laser wavelength for different filters, across the full ComCam raft.
+
+.. container:: figure
+
+   .. list-table::
+      :widths: 100
+      :header-rows: 0
+
+      * - .. image:: images/photometry.png
+            :width: 600px
+
+   **Figure 10**: The measured spot flux as a function of laser wavelength for different filters, across the full ComCam raft.
+
+Filter Throughput Measurement
+-----------------------------
+
+To compute the throughput of a given filter at a specific wavelength, we divide the measured flux of the spot with the filter in place by the flux measured with no filter.
+
+By repeating this process across all available wavelengths (see table above) and for each CCD in the g and r filters, we obtain the throughput curves shown in the figure below.
+
+.. container:: figure
+
+   .. list-table::
+      :widths: 100
+      :header-rows: 0
+
+      * - .. image:: images/filter_throughput.png
+            :width: 600px
+
+   **Figure 11**: The filter throughput measurements for the g and r filters. A red leak is very clearly visible in the g filter.
+
+Workflow Schema
+---------------
+
+The developed workflow to compute the throughput is shown below. Filter 1 denotes for either the g or r filter.
+
+.. container:: figure
+
+   .. list-table::
+      :widths: 100
+      :header-rows: 0
+
+      * - .. image:: images/workflow.png
+            :width: 600px
+
+   **Figure 11**: The filter throughput workflow.
+
+
+Additional Notes:
+-----------------
+
+Some wavelengths listed below were removed from the sample.
+
+.. list-table::
+   :widths: 25 75
+   :header-rows: 1
+
+   * - **Wavelength (nm)**
+     - **Reason**
+   * - 640
+     - Saturated
+   * - 650
+     - Duplicated, kept the one with best SNR (exposure time)
+   * - [676, 678, 680, 680]
+     - Uncontrolled laser flux sequence
+   * - [413, 417]
+     - Uncontrolled laser flux sequence
+
 
 Summary and Next Steps
 ======================
 
 Overall, the testing campaign with ComCam was very successful. We were able to demonstrate that the CBP works and to take the data that we need to design the masks we want for LSSTCam. In particular, we were able to measure the precise magnification factor of the CBP masks, image the ghosts, and measure the transmission of the g and r band filters. We saw evidence of red light leakage in the g-band, with the g band filter having around 50% transmission at 1190 nm.
 
-We are currently in the process of analyzing the data. We are also working on software to make the process of data collection more automated during LSSTCam.
+We are currently completing the analysis of the data. We are also working on software to make the process of data collection more automated during LSSTCam.
