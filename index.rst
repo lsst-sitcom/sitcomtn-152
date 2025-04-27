@@ -161,7 +161,7 @@ ComCam Filter Throughput Measurement
 Data Taking Sequence
 --------------------
 
-The CBP throughput measurement campaign on ComCam was performed on the 10th and the 11th of december 2024 on filters 'g' and 'r'. The mask used for this study is the one per CCD with 150 um diameter CBP pinholes. For each wavelength, the main sequence (A-1) of data taking consists of taking an image with the filter 'g', then with filter 'r', and finally without filter (denoted by 'none' here). Then, a set of 'dark' images with the laser off are taken following the same order (A-2). Sequence A is the combination of A-1 and A-2. Due to lack of time on the second day which was dedicated to scanning the filter edges, we switched to a second sequence (B). This sequence consists in taking an image with one filter immediately followed by an image with laser off for each wavelength, and then doing the same thing without a filter. For exposure time studies, there are some duplicate wavelengths. For both those sequences, half second electrometer readings were taken after every exposure.
+The CBP throughput measurement campaign on ComCam was performed on the 10th and the 11th of december 2024 on filters 'g' and 'r'. The mask used for this study is the one per CCD with 150 um diameter CBP pinholes. The standard data sequence involves taking an image with the filter 'g', then with filter 'r', and finally without a filter (denoted by 'none' here). Then, a set of 'dark' images with the laser off are taken following the same order. Due to lack of time on the second day which was dedicated to scanning the filter edges, we switched to a second sequence. This sequence consists in taking an image with one filter immediately followed by an image with laser off for each wavelength, and then doing the same thing without a filter. For exposure time studies, there are some duplicate wavelengths. For both those sequences, half second electrometer readings were taken after every exposure. More details about the sequences and the analysis can be found `at this link <https://rubinobs.atlassian.net/wiki/spaces/LTS/pages/647004216/CBP+ComCam+throughput+measurement>`_.
 
 .. container:: figure
 
@@ -174,39 +174,8 @@ The CBP throughput measurement campaign on ComCam was performed on the 10th and 
 
    **Figure 7**: The one-pinhole-per-CCD mask with a scaling so that the ghosts are clearly visible. This mask was used to perform the filter throughput measurements.
 
-.. list-table::
-   :widths: 15 40 10 10
-   :header-rows: 1
-
-   * - **Day**
-     - **Domain (nm)**
-     - **Steps (nm)**
-     - **Sequence**
-   * - 20241210
-     - [340,380] U [440,460] U [540,560] U [640,660] U [740,750] U [1000,1120] U [1140,1160]
-     - 10
-     - A
-   * - 20241210
-     - [380,440] U [460,540] U [560,640] U [660,740] U [1120,1140] U [1160,1240]
-     - 20
-     - A
-   * - 20241211
-     - [537, 570]
-     - 1
-     - A
-   * - 20241211
-     - [676, 706]
-     - 2 (r)
-     - B
-   * - 20241211
-     - [385, 419]
-     - 2 (g)
-     - B
-
-Images
-------
-
-The measurements described in this note were initially performed on post-ISR CCDs as a first approach. However, it was later discovered that the application of flats affected the flux measurement of the CBP spots, leading to issues in the throughput calculation, including values exceeding one.
+Image Processing
+----------------
 
 The images used in this analysis were reprocessed using a custom ISR configuration, which included only overscan subtraction.
 
@@ -249,10 +218,27 @@ Normalizing spot fluxes using these data would therefore introduce an additional
 
    **Figure 9**: The mean electrometer current for each measurement.
 
+Workflow Schema
+---------------
+
+Thus, the developed workflow to compute the throughput does not include the laser-off images or the photodiode measurements. 
+
+.. container:: figure
+
+   .. list-table::
+      :widths: 100
+      :header-rows: 0
+
+      * - .. image:: images/workflow.png
+            :width: 600px
+
+   **Figure 10**: The filter throughput workflow. Filter 1 denotes for either the g or r filter.
+
+
 Spots Flux Measurement - Aperture Photometry
 --------------------------------------------
 
-Spot fluxes are measured using aperture photometry with a circular aperture of 200 pixels in radius, selected to encompass the largest spot size observed across all exposures. The aperture is centered at the mean spot position for each filter and each day of data taking as described above (see background estimation).
+Spot fluxes are measured using aperture photometry with a circular aperture of 200 pixels in radius, selected to encompass the largest spot size observed across all exposures. The aperture is centered at the mean spot position for each filter and each day of data taking as described above.
 
 The radius choice was validated through a study of the dependence of the measured flux on aperture radius (see “Flux vs. Aperture Radius” figure). The photometry is performed using the photutils aperture photometry tools, applied to background-subtracted images using the background model described in the previous section.
 
@@ -267,7 +253,7 @@ The figure below shows the measured spot flux as a function of laser wavelength 
       * - .. image:: images/photometry.png
             :width: 600px
 
-   **Figure 10**: The measured spot flux as a function of laser wavelength for different filters, across the full ComCam raft.
+   **Figure 11**: The measured spot flux as a function of laser wavelength for different filters, across the full ComCam raft.
 
 Filter Throughput Measurement
 -----------------------------
@@ -285,44 +271,7 @@ By repeating this process across all available wavelengths (see table above) and
       * - .. image:: images/filter_throughput.png
             :width: 600px
 
-   **Figure 11**: The filter throughput measurements for the g and r filters. A red leak is very clearly visible in the g filter.
-
-Workflow Schema
----------------
-
-The developed workflow to compute the throughput is shown below. Filter 1 denotes for either the g or r filter.
-
-.. container:: figure
-
-   .. list-table::
-      :widths: 100
-      :header-rows: 0
-
-      * - .. image:: images/workflow.png
-            :width: 600px
-
-   **Figure 11**: The filter throughput workflow.
-
-
-Additional Notes:
------------------
-
-Some wavelengths listed below were removed from the sample.
-
-.. list-table::
-   :widths: 25 75
-   :header-rows: 1
-
-   * - **Wavelength (nm)**
-     - **Reason**
-   * - 640
-     - Saturated
-   * - 650
-     - Duplicated, kept the one with best SNR (exposure time)
-   * - [676, 678, 680, 680]
-     - Uncontrolled laser flux sequence
-   * - [413, 417]
-     - Uncontrolled laser flux sequence
+   **Figure 12**: The filter throughput measurements for the g and r filters. A red leak is very clearly visible in the g filter.
 
 
 Summary and Next Steps
